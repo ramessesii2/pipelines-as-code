@@ -1,6 +1,7 @@
 package kubeinteraction
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/openshift-pipelines/pipelines-as-code/pkg/apis/pipelinesascode"
@@ -19,7 +20,7 @@ const (
 	StateFailed    = "failed"
 )
 
-func AddLabelsAndAnnotations(event *info.Event, pipelineRun *tektonv1.PipelineRun, repo *apipac.Repository, providerinfo *info.ProviderConfig) {
+func AddLabelsAndAnnotations(event *info.Event, pipelineRun *tektonv1.PipelineRun, repo *apipac.Repository, providerinfo *info.ProviderConfig) error {
 	// Add labels on the soon to be created pipelinerun so UI/CLI can easily
 	// query them.
 	labels := map[string]string{
@@ -85,4 +86,12 @@ func AddLabelsAndAnnotations(event *info.Event, pipelineRun *tektonv1.PipelineRu
 	for k, v := range annotations {
 		pipelineRun.Annotations[k] = v
 	}
+
+	// Add annotations to PipelineRuns to integrate with Tekton Results
+	err := AddResultsAnnotation(event, pipelineRun)
+	if err != nil {
+		return fmt.Errorf("failed to add results annotations with error: %w", err)
+	}
+
+	return nil
 }

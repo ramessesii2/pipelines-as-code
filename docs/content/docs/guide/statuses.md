@@ -137,3 +137,17 @@ generating artifacts on every push. The relevant section of the pipeline can be
 found here:
 
 <https://github.com/openshift-pipelines/pipelines-as-code/blob/7b41cc3f769af40a84b7ead41c6f037637e95070/.tekton/push.yaml#L116>
+
+## Tekton Results Annotation
+
+The specialized annotation for Tekton Results is stored in a specific format:
+
+```json
+results.tekton.dev/recordSummaryAnnotations:{"repo":"pac-demo","commit":"62f8c8b7e4c3fc38cfbe7fcce2660e5b95de2d9a","eventType":"pull_request","pull_request-id":7}
+```
+
+This annotation is automatically added by Pipelines-as-Code to every PipelineRun
+it initiates.
+Unlike other annotations, which might be stored in `PipelineRun` or `TaskRun` metadata,
+this custom annotation is selectively captured to provide additional information
+specifically in the Tekton Results API.
